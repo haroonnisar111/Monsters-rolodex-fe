@@ -1,25 +1,37 @@
-import logo from './logo.svg';
+import React, { useState, useEffect } from 'react';
+import CardList from './components/card-list/card-list.component';
+import SearchBox from './components/search-box/search-box.component';
 import './App.css';
 
-function App() {
+const App = () => {
+  const [monsters, setMonsters] = useState([]);
+  const [searchStr, setSearchStr] = useState('');
+
+  useEffect(() => {
+    fetch('https://jsonplaceholder.typicode.com/users')
+      .then(response => response.json())
+      .then(users => setMonsters(users));
+  }, []);
+  const onSearchChange = e => {
+    const searchField = e.target.value.toLocaleLowerCase();
+    setSearchStr(searchField);
+  };
+  const filteredMon = monsters.filter(monster => {
+    return monster.name.toLocaleLowerCase().includes(searchStr);
+  });
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className='App'>
+      <h1 className='app-title'>Monsters Rolodex </h1>
+      <SearchBox
+        onChangeHandler={onSearchChange}
+        placeholder='Search Monsters'
+        className='search-Monst'
+      />
+
+      <CardList Cards={filteredMon} />
     </div>
   );
-}
+};
 
 export default App;
